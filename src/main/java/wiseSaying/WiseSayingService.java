@@ -26,10 +26,21 @@ public class WiseSayingService {
         return ws;
     }
 
-    public List<WiseSaying> findAll() {
-        return list;
+    public List<WiseSaying> findAll(String keywordType,String searchKeyword) {
+        if (keywordType.equals("all")) {
+            return list.reversed();
+        } else if (keywordType.equals("author")) {
+            return list.stream()
+                    .filter(ws -> ws.getAuthor().contains(searchKeyword))
+                    .toList().reversed();
+        } else if (keywordType.equals("content")) {
+            return list.stream()
+                    .filter(ws -> ws.getContent().contains(searchKeyword))
+                    .toList().reversed();
+        } else {
+            throw new IllegalArgumentException("알 수 없는 검색 타입: " + keywordType);
+        }
     }
-
     public boolean removeById(int id) {
         boolean removed = list.removeIf(ws -> ws.getId() == id);
         if (removed) wiseSayingRepository.saveList(list);
